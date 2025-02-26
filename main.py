@@ -93,7 +93,7 @@ async def update_vehiculo(id: int,
                           db=Depends(get_db),
                           user=Depends(verify_jwt)):
     await db.execute(
-        "UPDATE vehiculos SET marca = $1, modelo = $2, anio = $3, precio = $4 WHERE vehiculoid = $5",
+        "UPDATE vehiculos SET marca = $1, modelo = $2, anio = $3, precio = $4 WHERE vehiculo_id = $5",
         vehiculo.marca, vehiculo.modelo, vehiculo.anio, vehiculo.precio, id)
     return {"message": "Vehículo actualizado"}
 
@@ -109,7 +109,7 @@ async def create_cliente(cliente: ClienteCreate,
                          db=Depends(get_db),
                          user=Depends(verify_jwt)):
     await db.execute(
-        "INSERT INTO clientes (nombre, email, telefono) VALUES ($1, $2, $3)",
+        "INSERT INTO clientes (nombre, email, telefono) VALUES ($1, $2, $3) RETURNING cliente_id",
         cliente.nombre, cliente.email, cliente.telefono)
     return {"message": "Cliente agregado"}
 
@@ -120,7 +120,7 @@ async def update_cliente(id: int,
                          db=Depends(get_db),
                          user=Depends(verify_jwt)):
     await db.execute(
-        "UPDATE clientes SET nombre = $1, email = $2, telefono = $3 WHERE id = $4",
+        "UPDATE clientes SET nombre = $1, email = $2, telefono = $3 WHERE cliente_id = $4",
         cliente.nombre, cliente.email, cliente.telefono, id)
     return {"message": "Cliente actualizado"}
 
@@ -136,7 +136,7 @@ async def create_concesionario(concesionario: ConcesionarioCreate,
                                db=Depends(get_db),
                                user=Depends(verify_jwt)):
     await db.execute(
-        "INSERT INTO concesionarios (nombre, direccion, ciudad) VALUES ($1, $2, $3)",
+        "INSERT INTO concesionarios (nombre, direccion, ciudad) VALUES ($1, $2, $3) RETURNING concesionario_id",
         concesionario.nombre, concesionario.direccion, concesionario.ciudad)
     return {"message": "Concesionario agregado"}
 
@@ -147,7 +147,7 @@ async def update_concesionario(id: int,
                                db=Depends(get_db),
                                user=Depends(verify_jwt)):
     await db.execute(
-        "UPDATE concesionarios SET nombre = $1, direccion = $2, ciudad = $3 WHERE id = $4",
+        "UPDATE concesionarios SET nombre = $1, direccion = $2, ciudad = $3 WHERE concesionario_id = $4",
         concesionario.nombre, concesionario.direccion, concesionario.ciudad,
         id)
     return {"message": "Concesionario actualizado"}
@@ -164,7 +164,7 @@ async def create_transaccion(transaccion: TransaccionCreate,
                              db=Depends(get_db),
                              user=Depends(verify_jwt)):
     await db.execute(
-        "INSERT INTO transacciones (vehiculo_id, cliente_id, concesionario_id, fecha_venta, precio_venta) VALUES ($1, $2, $3, $4, $5)",
+        "INSERT INTO transacciones (vehiculo_id, cliente_id, concesionario_id, fecha_venta, precio_venta) VALUES ($1, $2, $3, $4, $5) RETURNING transaccion_id",
         transaccion.vehiculo_id, transaccion.cliente_id,
         transaccion.concesionario_id, transaccion.fecha_venta,
         transaccion.precio_venta)
@@ -177,7 +177,7 @@ async def update_transaccion(id: int,
                              db=Depends(get_db),
                              user=Depends(verify_jwt)):
     await db.execute(
-        "UPDATE transacciones SET vehiculo_id = $1, cliente_id = $2, concesionario_id = $3, fecha_venta = $4, precio_venta = $5 WHERE id = $6",
+        "UPDATE transacciones SET vehiculo_id = $1, cliente_id = $2, concesionario_id = $3, fecha_venta = $4, precio_venta = $5 WHERE transaccion_id = $6",
         transaccion.vehiculo_id, transaccion.cliente_id,
         transaccion.concesionario_id, transaccion.fecha_venta,
         transaccion.precio_venta, id)
