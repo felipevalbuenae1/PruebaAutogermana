@@ -96,7 +96,7 @@ async def update_vehiculo(id: int,
                           db=Depends(get_db),
                           user=Depends(verify_jwt)):
     await db.execute(
-        "UPDATE vehiculos SET marca = $1, modelo = $2, anio = $3, precio = $4 WHERE vehiculo_id = $5",
+        "UPDATE vehiculos SET marca = $1, modelo = $2, anio = $3, precio = $4 WHERE vehiculoid = $5",
         vehiculo.marca, vehiculo.modelo, vehiculo.anio, vehiculo.precio, id)
     return {"message": "Vehículo actualizado"}
 
