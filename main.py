@@ -77,15 +77,12 @@ async def get_vehiculos(db=Depends(get_db), user=Depends(verify_jwt)):
 
 # Endpoint para agregar un vehículo (requiere autenticación)
 @app.post("/vehiculos")
-async def create_vehiculo(marca: str,
-                          modelo: str,
-                          anio: int,
-                          precio: float,
+async def create_vehiculo(vehiculo: VehiculoCreate,
                           db=Depends(get_db),
                           user=Depends(verify_jwt)):
     await db.execute(
         "INSERT INTO vehiculos (marca, modelo, anio, precio) VALUES ($1, $2, $3, $4)",
-        marca, modelo, anio, precio)
+        vehiculo.marca, vehiculo.modelo, vehiculo.anio, vehiculo.precio)
     return {"message": "Vehículo agregado"}  # Mensaje de éxito
 
 
