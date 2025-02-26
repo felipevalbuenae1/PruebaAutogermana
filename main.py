@@ -7,6 +7,8 @@ from auth import hash_password, verify_password, create_jwt, verify_jwt
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 
+from models import Cliente, ClienteCreate, Concesionario, ConcesionarioCreate, Transaccion, TransaccionCreate
+
 # Crear instancia de FastAPI
 app = FastAPI()
 app.add_middleware(
@@ -62,3 +64,44 @@ async def create_vehiculo(marca: str, modelo: str, anio: int, precio: float, db=
 async def delete_vehiculo(id: int, db=Depends(get_db)):
     await db.execute("DELETE FROM vehiculos WHERE id = $1", id)  # Eliminar vehículo con ID específico
     return {"message": "Vehículo eliminado"}  # Mensaje de éxito
+
+
+
+### CLIENTES ###
+@app.get("/clientes")
+async def get_clientes(db=Depends(get_db), user=Depends(verify_jwt)):
+    return await db.fetch("SELECT * FROM clientes")
+
+@app.post("/clientes")
+async def create_cliente(cliente: ClienteCreate, db=Depends(get_db), user=Depends(verify_jwt)):
+    await db.execute(
+        "INSERT INTO clientes (nombre, email, telefono) VALUES ($1, $2, $3)",
+        cliente.nombre, cliente.email, cliente.telefono
+    )
+    return {"message": "Cliente agregado"}
+
+### CONCESIONARIOS ###
+@app.get("/concesionarios")
+async def get_concesionarios(db=Depends(get_db), user=Depends(verify_jwt)):
+    return await db.fetch("SELECT * FROM concesionarios")
+
+@app.post("/concesionarios")
+async def create_concesionario(concesionario: ConcesionarioCreate, db=Depends(get_db), user=Depends(verify_jwt)):
+    await db.execute(
+        "INSERT INTO concesionarios (nombre, direccion, ciudad) VALUES ($1, $2, $3)",
+        concesionario.nombre, concesionario.direccion, concesionario.ciudad
+    )
+    return {"message": "Concesionario agregado"}
+
+### TRANSACCIONES ###
+@app.get("/transacciones")
+async def get_transacciones(db=Depends(get_db), user=Depends(verify_jwt)):
+    return await db.fetch("SELECT * FROM transacciones")
+
+@app.post("/transacciones")
+async def create_transaccion(transaccion: TransaccionCreate, db=Depends(get_db), user=Depends(verify_jwt)):
+    await db.execute(
+        "INSERT INTO transacciones (vehiculo_id, cliente_id, concesionario_id, fecha_venta, precio_venta) VALUES ($1, $2, $3, $4, $5)",
+        transaccion.vehiculo_id, transaccion.cliente_id, transaccion.concesionario_id, transaccion.fecha_venta, transaccion.precio_venta
+    )
+    return {"message": "Transacción registrada"}
