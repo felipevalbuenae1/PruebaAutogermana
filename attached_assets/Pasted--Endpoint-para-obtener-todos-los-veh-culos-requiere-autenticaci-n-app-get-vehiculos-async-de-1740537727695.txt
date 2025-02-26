@@ -1,0 +1,72 @@
+# Endpoint para obtener todos los vehículos (requiere autenticación)
+@app.get("/vehiculos")
+async def get_vehiculos(db=Depends(get_db), user=Depends(verify_jwt)):
+    return await db.fetch("SELECT * FROM vehiculos")  # Consultar todos los vehículos en la BD
+
+# Endpoint para agregar un vehículo (requiere autenticación)
+@app.post("/vehiculos")
+async def create_vehiculo(marca: str, modelo: str, anio: int, precio: float, db=Depends(get_db), user=Depends(verify_jwt)):
+    await db.execute("INSERT INTO vehiculos (marca, modelo, anio, precio) VALUES ($1, $2, $3, $4)", marca, modelo, anio, precio)
+    return {"message": "Vehículo agregado"}  # Mensaje de éxito
+
+# Endpoint para borrar un vehículo por ID
+@app.delete("/vehiculos/{id}")
+async def delete_vehiculo(id: int, db=Depends(get_db)):
+    await db.execute("DELETE FROM vehiculos WHERE id = $1", id)  # Eliminar vehículo con ID específico
+    return {"message": "Vehículo eliminado"}  # Mensaje de éxito
+
+
+
+### CLIENTES ###
+@app.get("/clientes")
+async def get_clientes(db=Depends(get_db), user=Depends(verify_jwt)):
+    return await db.fetch("SELECT * FROM clientes")
+
+@app.post("/clientes")
+async def create_cliente(cliente: ClienteCreate, db=Depends(get_db), user=Depends(verify_jwt)):
+    await db.execute(
+        "INSERT INTO clientes (nombre, email, telefono) VALUES ($1, $2, $3)",
+        cliente.nombre, cliente.email, cliente.telefono
+    )
+    return {"message": "Cliente agregado"}
+
+@app.delete("/clientes/{id}")
+async def delete_cliente(id: int, db=Depends(get_db), user=Depends(verify_jwt)):
+    await db.execute("DELETE FROM clientes WHERE id = $1", id)
+    return {"message": "Cliente eliminado"}
+
+### CONCESIONARIOS ###
+@app.get("/concesionarios")
+async def get_concesionarios(db=Depends(get_db), user=Depends(verify_jwt)):
+    return await db.fetch("SELECT * FROM concesionarios")
+
+@app.post("/concesionarios")
+async def create_concesionario(concesionario: ConcesionarioCreate, db=Depends(get_db), user=Depends(verify_jwt)):
+    await db.execute(
+        "INSERT INTO concesionarios (nombre, direccion, ciudad) VALUES ($1, $2, $3)",
+        concesionario.nombre, concesionario.direccion, concesionario.ciudad
+    )
+    return {"message": "Concesionario agregado"}
+
+@app.delete("/concesionarios/{id}")
+async def delete_concesionario(id: int, db=Depends(get_db), user=Depends(verify_jwt)):
+    await db.execute("DELETE FROM concesionarios WHERE id = $1", id)
+    return {"message": "Concesionario eliminado"}
+
+### TRANSACCIONES ###
+@app.get("/transacciones")
+async def get_transacciones(db=Depends(get_db), user=Depends(verify_jwt)):
+    return await db.fetch("SELECT * FROM transacciones")
+
+@app.post("/transacciones")
+async def create_transaccion(transaccion: TransaccionCreate, db=Depends(get_db), user=Depends(verify_jwt)):
+    await db.execute(
+        "INSERT INTO transacciones (vehiculo_id, cliente_id, concesionario_id, fecha_venta, precio_venta) VALUES ($1, $2, $3, $4, $5)",
+        transaccion.vehiculo_id, transaccion.cliente_id, transaccion.concesionario_id, transaccion.fecha_venta, transaccion.precio_venta
+    )
+    return {"message": "Transacción registrada"}
+
+@app.delete("/transacciones/{id}")
+async def delete_transaccion(id: int, db=Depends(get_db), user=Depends(verify_jwt)):
+    await db.execute("DELETE FROM transacciones WHERE id = $1", id)
+    return {"message": "Transacción eliminada"}
