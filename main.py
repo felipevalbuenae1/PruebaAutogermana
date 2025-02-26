@@ -7,7 +7,7 @@ from auth import hash_password, verify_password, create_jwt, verify_jwt
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 
-from models import Cliente, ClienteCreate, Concesionario, ConcesionarioCreate, Transaccion, TransaccionCreate
+from models import Cliente, ClienteCreate, Concesionario, ConcesionarioCreate, Transaccion, TransaccionCreate, VehiculoCreate
 
 # Crear instancia de FastAPI
 app = FastAPI()
