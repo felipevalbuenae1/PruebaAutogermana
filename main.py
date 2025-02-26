@@ -92,15 +92,12 @@ async def create_vehiculo(marca: str,
 # Endpoint para actualizar un vehículo por ID
 @app.put("/vehiculos/{id}")
 async def update_vehiculo(id: int,
-                          marca: str,
-                          modelo: str,
-                          anio: int,
-                          precio: float,
+                          vehiculo: VehiculoCreate,
                           db=Depends(get_db),
                           user=Depends(verify_jwt)):
     await db.execute(
         "UPDATE vehiculos SET marca = $1, modelo = $2, anio = $3, precio = $4 WHERE id = $5",
-        marca, modelo, anio, precio, id)
+        vehiculo.marca, vehiculo.modelo, vehiculo.anio, vehiculo.precio, id)
     return {"message": "Vehículo actualizado"}
 
 
