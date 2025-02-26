@@ -80,10 +80,13 @@ async def create_cliente(cliente: ClienteCreate, db=Depends(get_db), user=Depend
     )
     return {"message": "Cliente agregado"}
 
-@app.delete("/clientes/{id}")
-async def delete_cliente(id: int, db=Depends(get_db), user=Depends(verify_jwt)):
-    await db.execute("DELETE FROM clientes WHERE id = $1", id)
-    return {"message": "Cliente eliminado"}
+@app.put("/clientes/{id}")
+async def update_cliente(id: int, cliente: ClienteCreate, db=Depends(get_db), user=Depends(verify_jwt)):
+    await db.execute(
+        "UPDATE clientes SET nombre = $1, email = $2, telefono = $3 WHERE id = $4",
+        cliente.nombre, cliente.email, cliente.telefono, id
+    )
+    return {"message": "Cliente actualizado"}
 
 ### CONCESIONARIOS ###
 @app.get("/concesionarios")
@@ -98,10 +101,13 @@ async def create_concesionario(concesionario: ConcesionarioCreate, db=Depends(ge
     )
     return {"message": "Concesionario agregado"}
 
-@app.delete("/concesionarios/{id}")
-async def delete_concesionario(id: int, db=Depends(get_db), user=Depends(verify_jwt)):
-    await db.execute("DELETE FROM concesionarios WHERE id = $1", id)
-    return {"message": "Concesionario eliminado"}
+@app.put("/concesionarios/{id}")
+async def update_concesionario(id: int, concesionario: ConcesionarioCreate, db=Depends(get_db), user=Depends(verify_jwt)):
+    await db.execute(
+        "UPDATE concesionarios SET nombre = $1, direccion = $2, ciudad = $3 WHERE id = $4",
+        concesionario.nombre, concesionario.direccion, concesionario.ciudad, id
+    )
+    return {"message": "Concesionario actualizado"}
 
 ### TRANSACCIONES ###
 @app.get("/transacciones")
@@ -116,7 +122,10 @@ async def create_transaccion(transaccion: TransaccionCreate, db=Depends(get_db),
     )
     return {"message": "Transacción registrada"}
 
-@app.delete("/transacciones/{id}")
-async def delete_transaccion(id: int, db=Depends(get_db), user=Depends(verify_jwt)):
-    await db.execute("DELETE FROM transacciones WHERE id = $1", id)
-    return {"message": "Transacción eliminada"}
+@app.put("/transacciones/{id}")
+async def update_transaccion(id: int, transaccion: TransaccionCreate, db=Depends(get_db), user=Depends(verify_jwt)):
+    await db.execute(
+        "UPDATE transacciones SET vehiculo_id = $1, cliente_id = $2, concesionario_id = $3, fecha_venta = $4, precio_venta = $5 WHERE id = $6",
+        transaccion.vehiculo_id, transaccion.cliente_id, transaccion.concesionario_id, transaccion.fecha_venta, transaccion.precio_venta, id
+    )
+    return {"message": "Transacción actualizada"}
