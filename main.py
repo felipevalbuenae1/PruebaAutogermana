@@ -80,6 +80,11 @@ async def create_cliente(cliente: ClienteCreate, db=Depends(get_db), user=Depend
     )
     return {"message": "Cliente agregado"}
 
+@app.delete("/clientes/{id}")
+async def delete_cliente(id: int, db=Depends(get_db), user=Depends(verify_jwt)):
+    await db.execute("DELETE FROM clientes WHERE id = $1", id)
+    return {"message": "Cliente eliminado"}
+
 ### CONCESIONARIOS ###
 @app.get("/concesionarios")
 async def get_concesionarios(db=Depends(get_db), user=Depends(verify_jwt)):
@@ -93,6 +98,11 @@ async def create_concesionario(concesionario: ConcesionarioCreate, db=Depends(ge
     )
     return {"message": "Concesionario agregado"}
 
+@app.delete("/concesionarios/{id}")
+async def delete_concesionario(id: int, db=Depends(get_db), user=Depends(verify_jwt)):
+    await db.execute("DELETE FROM concesionarios WHERE id = $1", id)
+    return {"message": "Concesionario eliminado"}
+
 ### TRANSACCIONES ###
 @app.get("/transacciones")
 async def get_transacciones(db=Depends(get_db), user=Depends(verify_jwt)):
@@ -105,3 +115,8 @@ async def create_transaccion(transaccion: TransaccionCreate, db=Depends(get_db),
         transaccion.vehiculo_id, transaccion.cliente_id, transaccion.concesionario_id, transaccion.fecha_venta, transaccion.precio_venta
     )
     return {"message": "Transacción registrada"}
+
+@app.delete("/transacciones/{id}")
+async def delete_transaccion(id: int, db=Depends(get_db), user=Depends(verify_jwt)):
+    await db.execute("DELETE FROM transacciones WHERE id = $1", id)
+    return {"message": "Transacción eliminada"}
