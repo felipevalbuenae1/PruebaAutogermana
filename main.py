@@ -33,12 +33,12 @@ async def register(user: UserCreate, db=Depends(get_db)):
 
 # Endpoint para inicio de sesión
 @app.post("/login")
-async def login(username: str, password: str, db=Depends(get_db)):
-    user = await db.fetchrow("SELECT * FROM usuarios WHERE username = $1", username)  # Buscar usuario en la BD
-    if not user or not verify_password(password, user["password"]):
+async def login(user: UserCreate, db=Depends(get_db)):
+    db_user = await db.fetchrow("SELECT * FROM usuarios WHERE username = $1", user.username)  # Buscar usuario en la BD
+    if not db_user or not verify_password(user.password, db_user["password"]):
         raise HTTPException(status_code=400, detail="Credenciales incorrectas")  # Error si las credenciales son incorrectas
 
-    token = create_jwt({"sub": user["username"]})  # Generar token JWT
+    token = create_jwt({"sub": db_user["username"]})  # Generar token JWT
     return {"access_token": token, "token_type": "bearer"}  # Devolver token JWT
 
 # Endpoint protegido con autenticación JWT
