@@ -59,11 +59,12 @@ async def create_vehiculo(marca: str, modelo: str, anio: int, precio: float, db=
     await db.execute("INSERT INTO vehiculos (marca, modelo, anio, precio) VALUES ($1, $2, $3, $4)", marca, modelo, anio, precio)
     return {"message": "Vehículo agregado"}  # Mensaje de éxito
 
-# Endpoint para borrar un vehículo por ID
-@app.delete("/vehiculos/{id}")
-async def delete_vehiculo(id: int, db=Depends(get_db)):
-    await db.execute("DELETE FROM vehiculos WHERE id = $1", id)  # Eliminar vehículo con ID específico
-    return {"message": "Vehículo eliminado"}  # Mensaje de éxito
+# Endpoint para actualizar un vehículo por ID
+@app.put("/vehiculos/{id}")
+async def update_vehiculo(id: int, marca: str, modelo: str, anio: int, precio: float, db=Depends(get_db), user=Depends(verify_jwt)):
+    await db.execute("UPDATE vehiculos SET marca = $1, modelo = $2, anio = $3, precio = $4 WHERE id = $5", 
+                    marca, modelo, anio, precio, id)
+    return {"message": "Vehículo actualizado"}
 
 
 
